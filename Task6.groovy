@@ -7,7 +7,7 @@ freeStyleJob('job1') {
         scm("* * * * *") 
     }
     steps {
-        shell('''if sudo ls | grep /devops-task6
+        shell('''if sudo ls / | grep devops-task6
 then
     sudo rm -rvf /devops-task6
 fi
@@ -29,10 +29,9 @@ then
         kubectl delete pvc --all
     fi
     sudo kubectl create -f /root/deployment/html_deployment.yml 
-    Pod_Name=$(kubectl get pods -o go-template \
-    --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-
-    sudo kubectl cp /devops-task6/* $Pod_Name:/usr/local/apache2/htdocs/
+    Pod_Name=$(kubectl get pod -l app=myweb -o jsonpath="{.items[0].metadata.name}")
+    sleep 50
+    sudo kubectl cp /devops-task6/*.html $Pod_Name:/usr/local/apache2/htdocs/
     
 elif ls /devops-task6 | grep .php
 then 
@@ -42,9 +41,9 @@ then
          sudo kubectl delete pvc --all
     fi
     sudo kubectl create -f /root/deployment/php_deployment.yml 
-    Pod_Name=$(kubectl get pods -o go-template \
-    --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-    sudo kubectl cp /devops-task6/* $Pod_Name:/var/www/html/
+    Pod_Name=$(kubectl get pod -l app=myweb -o jsonpath="{.items[0].metadata.name}")
+    sleep 50
+    sudo kubectl cp /devops-task6/*.php $Pod_Name:/var/www/html/
 else
    echo "There is something wrong"
 fi
@@ -89,7 +88,6 @@ buildPipelineView('Devops-task6') {
     filterBuildQueue()
     filterExecutors()
     title('CI Pipeline')
-    displayedBuilds(5)
     selectedJob('job1')
     alwaysAllowManualTrigger()
     showPipelineParameters()
