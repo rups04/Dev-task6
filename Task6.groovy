@@ -62,7 +62,7 @@ then
    echo "ok"
 else 
    echo "There is some error"
-   sudo curl --user "Rupali:redhat" http://172.17.0.2:8090/job/job4/build?token=Task6
+   sudo curl --user "<User_name>:<Password>" http://172.17.0.2:8090/job/job4/build?token=Task6
 fi
  ''')
     }
